@@ -36,7 +36,7 @@ export interface SprintMetrics {
   tasks: { total: number; done: number };
   stale_stories: StaleItem[];
   stale_tasks: StaleItem[];
-  unassigned_tasks: { id: number; name: string }[];
+  unassigned_tasks: { id: number; name: string; story_id: string | null; story_name: string }[];
   burndown: { date: string; ideal: number }[];
 }
 

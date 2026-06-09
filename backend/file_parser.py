@@ -159,6 +159,9 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
         raw_resp = row.get(col["responsible"]) if col["responsible"] else None
         responsible = raw_resp if raw_resp and str(raw_resp).strip() else None
 
+        raw_parent = row.get(col["parentStory"]) if col["parentStory"] else None
+        parent_story = str(raw_parent).strip() if raw_parent and str(raw_parent).strip() else None
+
         raw_date = row.get(col["lastUpdated"]) if col["lastUpdated"] else None
         last_updated = _parse_date_to_ms(raw_date) if raw_date else None
 
@@ -167,6 +170,7 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
             "name": row.get(col["name"], f"Tâche {i + 1}") if col["name"] else f"Tâche {i + 1}",
             "state": state if state is not None else 0,
             "responsible": responsible,
+            "parentStory": parent_story,
             "lastUpdated": last_updated,
         })
 

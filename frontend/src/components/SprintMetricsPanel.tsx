@@ -98,11 +98,24 @@ export default function SprintMetricsPanel({ data }: Props) {
               Tâches non assignées ({unassigned_tasks.length})
             </span>
           </div>
-          <ul className="space-y-1">
-            {unassigned_tasks.map((t) => (
-              <li key={t.id} className="text-sm text-gray-300 truncate">{t.name}</li>
-            ))}
-          </ul>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-xs text-gray-500 uppercase border-b border-gray-800">
+                <th className="text-left pb-2 pr-3 font-medium w-16">ID</th>
+                <th className="text-left pb-2 pr-3 font-medium">Tâche</th>
+                <th className="text-left pb-2 font-medium">Story parente</th>
+              </tr>
+            </thead>
+            <tbody>
+              {unassigned_tasks.map((t) => (
+                <tr key={t.id} className="border-b border-gray-800 last:border-0">
+                  <td className="py-1.5 pr-3 text-gray-500 font-mono">#{t.id}</td>
+                  <td className="py-1.5 pr-3 text-gray-300">{t.name}</td>
+                  <td className="py-1.5 text-gray-400 italic">{t.story_name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
