@@ -3,14 +3,14 @@ import StatCard from "./StatCard";
 import StatusBadge from "./StatusBadge";
 import BurndownChart from "./BurndownChart";
 import StaleList from "./StaleList";
-import { Clock, CheckSquare, AlertCircle } from "lucide-react";
+import { Clock, Timer } from "lucide-react";
 
 interface Props {
   data: SprintMetrics;
 }
 
 export default function SprintMetricsPanel({ data }: Props) {
-  const { sprint, on_track, stories, tasks, stale_stories, stale_tasks, unassigned_tasks, burndown } = data;
+  const { sprint, on_track, stories, tasks, stale_stories, stale_tasks, long_running_tasks, burndown } = data;
 
   const endDate = sprint.end ? new Date(sprint.end).toLocaleDateString("fr-FR") : "—";
 
@@ -89,29 +89,33 @@ export default function SprintMetricsPanel({ data }: Props) {
         <StaleList items={stale_tasks} label="Tâches" />
       </div>
 
-      {/* Unassigned tasks */}
-      {unassigned_tasks.length > 0 && (
+      {/* Long running in-progress tasks */}
+      {long_running_tasks.length > 0 && (
         <div className="bg-gray-900 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3 text-orange-400">
-            <AlertCircle size={14} />
+          <div className="flex items-center gap-2 mb-3 text-red-400">
+            <Timer size={14} />
             <span className="text-xs font-semibold uppercase tracking-wide">
-              Tâches non assignées ({unassigned_tasks.length})
+              Tâches en cours &gt; 2 jours ({long_running_tasks.length})
             </span>
           </div>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs text-gray-500 uppercase border-b border-gray-800">
-                <th className="text-left pb-2 pr-3 font-medium w-16">ID</th>
+                <th className="text-left pb-2 pr-3 font-medium w-14">ID</th>
                 <th className="text-left pb-2 pr-3 font-medium">Tâche</th>
-                <th className="text-left pb-2 font-medium">Story parente</th>
+                <th className="text-left pb-2 pr-3 font-medium">Responsable</th>
+                <th className="text-left pb-2 pr-3 font-medium">Story</th>
+                <th className="text-right pb-2 font-medium w-16">Depuis</th>
               </tr>
             </thead>
             <tbody>
-              {unassigned_tasks.map((t) => (
+              {long_running_tasks.map((t) => (
                 <tr key={t.id} className="border-b border-gray-800 last:border-0">
                   <td className="py-1.5 pr-3 text-gray-500 font-mono">#{t.id}</td>
                   <td className="py-1.5 pr-3 text-gray-300">{t.name}</td>
-                  <td className="py-1.5 text-gray-400 italic">{t.story_name}</td>
+                  <td className="py-1.5 pr-3 text-gray-400">{t.responsible}</td>
+                  <td className="py-1.5 pr-3 text-gray-400 italic">{t.story_name}</td>
+                  <td className="py-1.5 text-right text-red-400 font-mono">{t.days}j</td>
                 </tr>
               ))}
             </tbody>

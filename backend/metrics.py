@@ -64,7 +64,20 @@ def sprint_health(sprint: dict, stories: list[dict], tasks: list[dict]) -> dict:
         if t.get("state") == 1 and (_days_since(t.get("lastUpdated")) or 0) > STALE_DAYS
     ]
     story_lookup = {str(s["id"]): s.get("name", f"US {s['id']}") for s in stories}
-    unassigned_tasks = [t for t in tasks if not t.get("responsible") and t.get("state") != 2]
+
+    # Tasks in progress for more than 2 days
+    long_running_tasks = [
+        {
+            "id": t["id"],
+            "name": t.get("name"),
+            "responsible": t.get("responsible") or "—",
+            "story_id": t.get("parentStory"),
+            "story_name": story_lookup.get(str(t.get("parentStory", "")), "—") if t.get("parentStory") else "—",
+            "days": round(_days_since(t.get("lastUpdated")) or 0),
+        }
+        for t in tasks
+        if t.get("state") == 1 and (_days_since(t.get("lastUpdated")) or 0) > 2
+    ]
 
     # Burndown points per day (simplified: done pts spread)
     burndown = _build_burndown(sprint, stories)
@@ -94,15 +107,7 @@ def sprint_health(sprint: dict, stories: list[dict], tasks: list[dict]) -> dict:
         },
         "stale_stories": stale_stories,
         "stale_tasks": stale_tasks,
-        "unassigned_tasks": [
-            {
-                "id": t["id"],
-                "name": t.get("name"),
-                "story_id": t.get("parentStory"),
-                "story_name": story_lookup.get(str(t.get("parentStory", "")), "—") if t.get("parentStory") else "—",
-            }
-            for t in unassigned_tasks
-        ],
+        "long_running_tasks": long_running_tasks,
         "burndown": burndown,
     }
 
