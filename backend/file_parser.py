@@ -1,5 +1,6 @@
 import csv
 import io
+import re
 from datetime import datetime
 from typing import Any, Optional
 
@@ -160,7 +161,11 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
         responsible = raw_resp if raw_resp and str(raw_resp).strip() else None
 
         raw_parent = row.get(col["parentStory"]) if col["parentStory"] else None
-        parent_story = str(raw_parent).strip() if raw_parent and str(raw_parent).strip() else None
+        if raw_parent and str(raw_parent).strip():
+            m = re.match(r'^(\d+)', str(raw_parent).strip())
+            parent_story = m.group(1) if m else str(raw_parent).strip()
+        else:
+            parent_story = None
 
         raw_date = row.get(col["lastUpdated"]) if col["lastUpdated"] else None
         last_updated = _parse_date_to_ms(raw_date) if raw_date else None
