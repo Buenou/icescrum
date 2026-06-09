@@ -9,5 +9,8 @@ export default defineConfig({
     proxy: {
       "/api": "http://backend:8000",
     },
+    hmr: {
+      clientPort: 5173,
+    },
   },
 });
