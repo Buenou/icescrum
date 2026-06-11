@@ -41,6 +41,7 @@ STORY_STATE_MAP: dict[str, int] = {
     "en_cours": 3, "en cours": 3, "encours": 3,
     "4": 4, "done": 4, "terminée": 4, "terminee": 4, "termine": 4,
     "finished": 4, "completed": 4, "fait": 4, "réalisée": 4, "realisee": 4,
+    "fini": 4, "finie": 4,
     "7": 7, "icebox": 7,
 }
 
@@ -51,6 +52,7 @@ TASK_STATE_MAP: dict[str, int] = {
     "en_cours": 1, "en cours": 1, "encours": 1,
     "2": 2, "done": 2, "terminée": 2, "termine": 2,
     "finished": 2, "fait": 2, "réalisée": 2, "realisee": 2,
+    "fini": 2, "finie": 2,
 }
 
 
@@ -123,8 +125,6 @@ def parse_stories(content: bytes, filename: str = "") -> list[dict]:
 
     headers = list(rows[0].keys())
     col = _build_col_map(headers, STORY_FIELD_ALIASES)
-    if col["state"]:
-        print(f"[parse_stories] raw state values={set(row.get(col['state']) for row in rows)}")
 
     stories = []
     for i, row in enumerate(rows):
@@ -159,8 +159,6 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
 
     headers = list(rows[0].keys())
     col = _build_col_map(headers, TASK_FIELD_ALIASES)
-    if col["state"]:
-        print(f"[parse_tasks] raw state values={set(row.get(col['state']) for row in rows)}")
 
     tasks = []
     for i, row in enumerate(rows):
