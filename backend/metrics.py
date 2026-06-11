@@ -50,18 +50,18 @@ def sprint_health(sprint: dict, stories: list[dict], tasks: list[dict]) -> dict:
 
     # Stale stories: in progress but no recent activity
     stale_stories = [
-        {"id": s["id"], "name": s.get("name"), "days": round(_days_since(s.get("lastUpdated")) or 0)}
+        {"id": s["id"], "name": s.get("name"), "days": round(_days_since(s.get("inProgressDate") or s.get("lastUpdated")) or 0)}
         for s in stories
-        if s.get("state") == 3 and (_days_since(s.get("lastUpdated")) or 0) > STALE_DAYS
+        if s.get("state") == 3 and (_days_since(s.get("inProgressDate") or s.get("lastUpdated")) or 0) > STALE_DAYS
     ]
 
     # Tasks breakdown
     total_tasks = len(tasks)
     done_tasks = sum(1 for t in tasks if t.get("state") == 2)
     stale_tasks = [
-        {"id": t["id"], "name": t.get("name"), "days": round(_days_since(t.get("lastUpdated")) or 0)}
+        {"id": t["id"], "name": t.get("name"), "days": round(_days_since(t.get("inProgressDate") or t.get("lastUpdated")) or 0)}
         for t in tasks
-        if t.get("state") == 1 and (_days_since(t.get("lastUpdated")) or 0) > STALE_DAYS
+        if t.get("state") == 1 and (_days_since(t.get("inProgressDate") or t.get("lastUpdated")) or 0) > STALE_DAYS
     ]
     story_lookup = {str(s["id"]): s.get("name", f"US {s['id']}") for s in stories}
 
@@ -73,10 +73,10 @@ def sprint_health(sprint: dict, stories: list[dict], tasks: list[dict]) -> dict:
             "responsible": t.get("responsible") or "—",
             "story_id": t.get("parentStory"),
             "story_name": story_lookup.get(str(t.get("parentStory", "")), "—") if t.get("parentStory") else "—",
-            "days": round(_days_since(t.get("lastUpdated")) or 0),
+            "days": round(_days_since(t.get("inProgressDate") or t.get("lastUpdated")) or 0),
         }
         for t in tasks
-        if t.get("state") == 1 and (_days_since(t.get("lastUpdated")) or 0) > 2
+        if t.get("state") == 1 and (_days_since(t.get("inProgressDate") or t.get("lastUpdated")) or 0) > 2
     ]
 
     # Burndown points per day (simplified: done pts spread)

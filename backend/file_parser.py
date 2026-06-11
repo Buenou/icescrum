@@ -13,6 +13,7 @@ STORY_FIELD_ALIASES: dict[str, list[str]] = {
         "lastupdated", "last_updated", "updated_at", "updatedate",
         "datemodified", "modifieddate", "date_modification",
     ],
+    "inProgressDate": ["inprogressdate", "in_progress_date"],
     "sprint":      ["sprint", "sprint_id", "sprint_name", "sprintid"],
 }
 
@@ -26,6 +27,7 @@ TASK_FIELD_ALIASES: dict[str, list[str]] = {
         "lastupdated", "last_updated", "updated_at", "updatedate",
         "datemodified", "modifieddate",
     ],
+    "inProgressDate": ["inprogressdate", "in_progress_date"],
     "responsible": ["responsible", "assignee", "assigned_to", "responsable"],
     "parentStory": ["parentstory", "story_id", "us_id", "parent_story", "us", "us_num"],
 }
@@ -121,7 +123,6 @@ def parse_stories(content: bytes, filename: str = "") -> list[dict]:
 
     headers = list(rows[0].keys())
     col = _build_col_map(headers, STORY_FIELD_ALIASES)
-    print(f"[parse_stories] headers={headers} col_map={col}")
 
     stories = []
     for i, row in enumerate(rows):
@@ -134,12 +135,16 @@ def parse_stories(content: bytes, filename: str = "") -> list[dict]:
         raw_date = row.get(col["lastUpdated"]) if col["lastUpdated"] else None
         last_updated = _parse_date_to_ms(raw_date) if raw_date else None
 
+        raw_in_progress = row.get(col["inProgressDate"]) if col["inProgressDate"] else None
+        in_progress_date = _parse_date_to_ms(raw_in_progress) if raw_in_progress else None
+
         stories.append({
             "id": row.get(col["id"], i) if col["id"] else i,
             "name": row.get(col["name"], f"US {i + 1}") if col["name"] else f"US {i + 1}",
             "state": state if state is not None else 0,
             "effort": effort,
             "lastUpdated": last_updated,
+            "inProgressDate": in_progress_date,
         })
 
     return stories
@@ -152,7 +157,6 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
 
     headers = list(rows[0].keys())
     col = _build_col_map(headers, TASK_FIELD_ALIASES)
-    print(f"[parse_tasks] headers={headers} col_map={col}")
 
     tasks = []
     for i, row in enumerate(rows):
@@ -172,6 +176,9 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
         raw_date = row.get(col["lastUpdated"]) if col["lastUpdated"] else None
         last_updated = _parse_date_to_ms(raw_date) if raw_date else None
 
+        raw_in_progress = row.get(col["inProgressDate"]) if col["inProgressDate"] else None
+        in_progress_date = _parse_date_to_ms(raw_in_progress) if raw_in_progress else None
+
         tasks.append({
             "id": row.get(col["id"], i) if col["id"] else i,
             "name": row.get(col["name"], f"Tâche {i + 1}") if col["name"] else f"Tâche {i + 1}",
@@ -179,6 +186,7 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
             "responsible": responsible,
             "parentStory": parent_story,
             "lastUpdated": last_updated,
+            "inProgressDate": in_progress_date,
         })
 
     return tasks
