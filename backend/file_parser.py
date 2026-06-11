@@ -121,6 +121,7 @@ def parse_stories(content: bytes, filename: str = "") -> list[dict]:
 
     headers = list(rows[0].keys())
     col = _build_col_map(headers, STORY_FIELD_ALIASES)
+    print(f"[parse_stories] headers={headers} col_map={col}")
 
     stories = []
     for i, row in enumerate(rows):
@@ -151,6 +152,7 @@ def parse_tasks(content: bytes, filename: str = "") -> list[dict]:
 
     headers = list(rows[0].keys())
     col = _build_col_map(headers, TASK_FIELD_ALIASES)
+    print(f"[parse_tasks] headers={headers} col_map={col}")
 
     tasks = []
     for i, row in enumerate(rows):
