@@ -88,6 +88,15 @@ def data_status():
     }
 
 
+@app.get("/api/data/raw")
+def data_raw():
+    """Debug: return raw parsed stories and tasks."""
+    data = store.get_data()
+    if not data:
+        raise HTTPException(404, "Aucune donnée chargée. Veuillez importer des fichiers.")
+    return {"stories": data["stories"], "tasks": data["tasks"]}
+
+
 @app.get("/api/metrics")
 def get_metrics():
     """Return metrics for the currently loaded data."""
