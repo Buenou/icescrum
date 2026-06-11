@@ -10,7 +10,8 @@ export default defineConfig({
       "/api": "http://backend:8000",
     },
     hmr: {
-      clientPort: 5173,
+      clientPort: process.env.VITE_HMR_CLIENT_PORT ? Number(process.env.VITE_HMR_CLIENT_PORT) : 5173,
+      protocol: process.env.VITE_HMR_PROTOCOL || "ws",
     },
   },
 });

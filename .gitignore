@@ -11,6 +11,7 @@ dist/
 
 # Docker
 .dockerignore
+docker-compose.override.yml
 
 # Données locales (ne pas versionner)
 data/Inputs/
